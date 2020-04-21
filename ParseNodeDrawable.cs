@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using AnnotatedSentence;
+using AnnotatedTree.Processor;
 using AnnotatedTree.Processor.Condition;
 using Dictionary.Dictionary;
 using MorphologicalAnalysis;
@@ -38,7 +39,7 @@ namespace AnnotatedTree
             }
             else
             {
-                int startPos = line.IndexOf(" ");
+                var startPos = line.IndexOf(" ");
 
                 data = new Symbol(line.Substring(1, startPos - 1));
                 if (line.IndexOf(")") == line.LastIndexOf(")"))
@@ -49,7 +50,7 @@ namespace AnnotatedTree
                 }
                 else
                 {
-                    for (int i = startPos + 1; i < line.Length; i++)
+                    for (var i = startPos + 1; i < line.Length; i++)
                     {
                         if (line[i] != ' ' || parenthesisCount > 0)
                         {
@@ -581,9 +582,9 @@ namespace AnnotatedTree
         {
             var startWord = true;
             var nodeLabel = "";
-            NodeDrawableCollector nodeDrawableCollector = new NodeDrawableCollector(this, new IsTurkishLeafNode());
+            var nodeDrawableCollector = new NodeDrawableCollector(this, new IsTurkishLeafNode());
 
-            List<ParseNodeDrawable> leafList = nodeDrawableCollector.collect();
+            var leafList = nodeDrawableCollector.Collect();
             if (SentenceLabels.Contains(label))
                 label = label.Replace(label, "S");
             switch (chunkType)
