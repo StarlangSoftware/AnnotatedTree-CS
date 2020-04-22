@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using AnnotatedSentence;
 using AnnotatedTree.Processor;
 using AnnotatedTree.Processor.Condition;
@@ -147,15 +149,15 @@ namespace AnnotatedTree
             layers = null;
         }
 
-        public new void SetData(Symbol data)
+        public new void SetData(Symbol newData)
         {
             if (layers == null)
             {
-                base.SetData(data);
+                base.SetData(newData);
             }
             else
             {
-                layers.SetLayerData(ViewLayerType.ENGLISH_WORD, data.GetName());
+                layers.SetLayerData(ViewLayerType.ENGLISH_WORD, newData.GetName());
             }
         }
 
@@ -277,27 +279,123 @@ namespace AnnotatedTree
             children[children.IndexOf(oldChild)] = newChild;
         }
 
-        public void UpdateDepths(int depth)
+        public void UpdateDepths(int newDepth)
         {
-            this.depth = depth;
+            this.depth = newDepth;
             foreach (var aChildren in children)
             {
                 var aChild = (ParseNodeDrawable) aChildren;
-                aChild.UpdateDepths(depth + 1);
+                aChild.UpdateDepths(newDepth + 1);
             }
         }
 
         public int MaxDepth()
         {
-            int depth = this.depth;
+            int currentDepth = this.depth;
             foreach (var aChildren in children)
             {
                 var aChild = (ParseNodeDrawable) aChildren;
-                if (aChild.MaxDepth() > depth)
-                    depth = aChild.MaxDepth();
+                if (aChild.MaxDepth() > currentDepth)
+                    currentDepth = aChild.MaxDepth();
             }
 
-            return depth;
+            return currentDepth;
+        }
+
+        public bool Satisfy(ParseNodeSearchable node)
+        {
+            int i;
+            if (node.IsLeaf() && children.Count > 0)
+                return false;
+            for (i = 0; i < node.Size(); i++)
+            {
+                var viewLayer = node.GetViewLayerType(i);
+                var currentData = node.GetValue(i);
+                if (GetLayerData(viewLayer) == null && node.GetType(i) != SearchType.EQUALS &&
+                    node.GetType(i) != SearchType.IS_NULL)
+                {
+                    return false;
+                }
+
+                switch (node.GetType(i))
+                {
+                    case SearchType.CONTAINS:
+                        if (!GetLayerData(viewLayer).Contains(currentData))
+                        {
+                            return false;
+                        }
+
+                        break;
+                    case SearchType.EQUALS:
+                        if (GetLayerData(viewLayer) == null)
+                        {
+                            if (node.GetValue(i) != "")
+                            {
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            if (!GetLayerData(viewLayer).Equals(currentData))
+                            {
+                                return false;
+                            }
+                        }
+
+                        break;
+                    case SearchType.EQUALS_IGNORE_CASE:
+                        if (!GetLayerData(viewLayer).Equals(currentData, StringComparison.OrdinalIgnoreCase))
+                        {
+                            return false;
+                        }
+
+                        break;
+                    case SearchType.MATCHES:
+                        if (!new Regex(currentData).IsMatch(GetLayerData(viewLayer)))
+                        {
+                            return false;
+                        }
+
+                        break;
+                    case SearchType.STARTS:
+                        if (!GetLayerData(viewLayer).StartsWith(currentData))
+                        {
+                            return false;
+                        }
+
+                        break;
+                    case SearchType.ENDS:
+                        if (!GetLayerData(viewLayer).EndsWith(currentData))
+                        {
+                            return false;
+                        }
+
+                        break;
+                    case SearchType.IS_NULL:
+                        if (GetLayerData(viewLayer) != null)
+                        {
+                            return false;
+                        }
+
+                        break;
+                }
+            }
+
+            if (node.NumberOfChildren() > children.Count)
+            {
+                return false;
+            }
+
+            for (i = 0; i < children.Count; i++)
+            {
+                if (i < node.NumberOfChildren() &&
+                    !((ParseNodeDrawable) GetChild(i)).Satisfy((ParseNodeSearchable) node.GetChild(i)))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public void UpdatePosTags()
@@ -492,21 +590,37 @@ namespace AnnotatedTree
 
         public new bool IsDummyNode()
         {
-            var data = GetLayerData(ViewLayerType.ENGLISH_WORD);
+            var currentData = GetLayerData(ViewLayerType.ENGLISH_WORD);
             var parentData = ((ParseNodeDrawable) parent).GetLayerData(ViewLayerType.ENGLISH_WORD);
 
             var targetData = GetLayerData(ViewLayerType.TURKISH_WORD);
-            if (data != null && parentData != null)
+            if (currentData != null && parentData != null)
             {
                 if (targetData != null && targetData.Contains("*"))
                 {
                     return true;
                 }
 
-                return data.Contains("*") || (data.Equals("0") && parentData.Equals("-NONE-"));
+                return currentData.Contains("*") || (currentData.Equals("0") && parentData.Equals("-NONE-"));
             }
 
             return false;
+        }
+
+        public List<ParseNodeDrawable> Satisfy(ParseTreeSearchable tree)
+        {
+            List<ParseNodeDrawable> result = new List<ParseNodeDrawable>();
+            if (Satisfy((ParseNodeSearchable) tree.GetRoot()))
+            {
+                result.Add(this);
+            }
+
+            foreach (var child in children)
+            {
+                result = result.Union(((ParseNodeDrawable) child).Satisfy(tree)).ToList();
+            }
+
+            return result;
         }
 
         public bool LayerAll(ViewLayerType viewLayerType)
@@ -612,7 +726,7 @@ namespace AnnotatedTree
                 var layersInNode = node.GetLayerInfo();
                 for (var i = 0; i < layersInNode.GetNumberOfWords(); i++)
                 {
-                    var wordLabel = "";
+                    string wordLabel;
                     if (startWord)
                     {
                         wordLabel = "B" + label;
