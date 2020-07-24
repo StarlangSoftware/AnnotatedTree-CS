@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp2.2</TargetFramework>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageId>NlpToolkit-AnnotatedTree</PackageId>
+        <PackageVersion>1.0.2</PackageVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="NlpToolkit-AnnotatedSentence" Version="1.0.3" />
+      <PackageReference Include="NlpToolkit-ParseTree" Version="1.0.1" />
+      <PackageReference Include="NlpToolkit-Util" Version="1.0.2" />
+    </ItemGroup>
+
+</Project>
