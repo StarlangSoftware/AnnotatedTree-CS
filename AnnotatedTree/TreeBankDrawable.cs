@@ -61,7 +61,7 @@ namespace AnnotatedTree
             Array.Sort(listOfFiles);
             foreach (var file in listOfFiles)
             {
-                ReadTree(file, folder);
+                ReadTree(folder, file);
             }
         }
 
