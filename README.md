@@ -1,3 +1,5 @@
+# Constituency Annotated TreeBank
+
 A treebank is a corpus where the sentences in each language are syntactically (if necessary morphologically) annotated. In the treebanks, the syntactic annotation usually follows constituent and/or dependency structure.
 
 Treebanks annotated for the syntactic or semantic structures of the sentences are essential for developing state-of-the-art statistical natural language processing (NLP) systems including part-of-speech-taggers, syntactic parsers, and machine translation systems. There are two main groups of syntactic treebanks, namely treebanks annotated for constituency (phrase structure) and the ones that are annotated for dependency structure.
@@ -66,7 +68,6 @@ Detailed Description
 + [TreeBankDrawable](#treebankdrawable)
 + [ParseTreeDrawable](#parsetreedrawable)
 + [LayerInfo](#layerinfo)
-+ [Automatic Annotation](#automatic-annotation)
 
 ## TreeBankDrawable
 
@@ -132,48 +133,3 @@ the argument tag of the annotated word:
 the word count in a node:
 
 	int GetNumberOfWords()
-
-## Automatic Annotation
-
-To assign the arguments of a sentence automatically:
-
-	TurkishAutoArgument()
-
-above class is used.
-
-	void AutoArgument(ParseTreeDrawable parseTree, Frameset frameset);
-
-With above line, the arguments of the tree are annotated automatically.
-
-To automatically disambiguate a sentence's morphology:
-
-	TurkishTreeAutoDisambiguator(RootWordStatistics rootWordStatistics)
-								  
-above class is used. For example,
-
-	a = TurkishTreeAutoDisambiguator(new RootWordStatistics());
-	a.AutoDisambiguate(parseTree);
-
-with the above code, automatic morphological disambiguation of the tree can be made.
-
-To apply named entity recognition to a sentence:
-
-	TurkishSentenceAutoNER()
-
-above class is used. For example,
-
-	a = TurkishTreeAutoNER();
-	a.AutoNER(parseTree);
-
-with the above code, automatic named entity recognition of a tree can be made.
-
-To make semantic annotation in a sentence:
-
-	TurkishTreeAutoSemantic()
-
-above class can be used. For example,
-
-	a = TurkishTreeAutoSemantic();
-	a.AutoSemantic(parseTree);
-
-with above code, automatic semantic annotation of the tree can be made.
