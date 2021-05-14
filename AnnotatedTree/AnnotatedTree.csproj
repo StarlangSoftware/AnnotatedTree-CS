@@ -4,12 +4,12 @@
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageId>NlpToolkit-AnnotatedTree</PackageId>
-        <PackageVersion>1.0.5</PackageVersion>
+        <PackageVersion>1.0.6</PackageVersion>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="NlpToolkit-AnnotatedSentence" Version="1.0.10" />
-      <PackageReference Include="NlpToolkit-ParseTree" Version="1.0.2" />
+      <PackageReference Include="NlpToolkit-AnnotatedSentence" Version="1.0.14" />
+      <PackageReference Include="NlpToolkit-ParseTree" Version="1.0.4" />
       <PackageReference Include="NlpToolkit-Util" Version="1.0.2" />
     </ItemGroup>
 
