@@ -4,7 +4,7 @@ namespace AnnotatedTree.Processor.Condition
 {
     public class IsNoneReplaceable : IsLeafNode
     {
-        public new bool Satisfies(ParseNodeDrawable parseNode)
+        public override bool Satisfies(ParseNodeDrawable parseNode)
         {
             if (base.Satisfies(parseNode))
             {

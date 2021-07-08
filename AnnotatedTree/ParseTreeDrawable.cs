@@ -321,6 +321,22 @@ namespace AnnotatedTree
             return sentence;
         }
 
+        public AnnotatedSentence.AnnotatedSentence GenerateAnnotatedSentence(string language)
+        {
+            var sentence = new AnnotatedSentence.AnnotatedSentence("");
+            var nodeDrawableCollector =
+                new NodeDrawableCollector((ParseNodeDrawable) root, new IsEnglishLeafNode());
+            var leafList = nodeDrawableCollector.Collect();
+            foreach (var parseNode in leafList)
+            {
+                var newWord = new AnnotatedWord("{" + language + "=" + parseNode.GetData().GetName() + "}{posTag="
+                                                + parseNode.GetParent().GetData().GetName() + "}");
+                sentence.AddWord(newWord);
+            }
+
+            return sentence;
+        }
+
         public List<ParseNodeDrawable> ExtractNodesWithVerbs(WordNet.WordNet wordNet)
         {
             var nodeDrawableCollector =

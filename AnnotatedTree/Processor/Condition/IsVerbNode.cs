@@ -13,7 +13,7 @@ namespace AnnotatedTree.Processor.Condition
             this._wordNet = wordNet;
         }
 
-        public new bool Satisfies(ParseNodeDrawable parseNode)
+        public override bool Satisfies(ParseNodeDrawable parseNode)
         {
             var layerInfo = parseNode.GetLayerInfo();
             if (base.Satisfies(parseNode) && layerInfo != null &&

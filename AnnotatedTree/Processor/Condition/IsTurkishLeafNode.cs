@@ -4,7 +4,7 @@ namespace AnnotatedTree.Processor.Condition
 {
     public class IsTurkishLeafNode : IsLeafNode
     {
-        public new bool Satisfies(ParseNodeDrawable parseNode)
+        public override bool Satisfies(ParseNodeDrawable parseNode)
         {
             if (base.Satisfies(parseNode))
             {

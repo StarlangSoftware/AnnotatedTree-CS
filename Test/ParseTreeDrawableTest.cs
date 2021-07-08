@@ -151,5 +151,50 @@ namespace Test
                 "{turkish=.}{morphologicalAnalysis=.+PUNC}{metaMorphemes=.}{semantics=TUR10-1081860}{namedEntity=NONE}{propbank=NONE}",
                 tree9.GenerateAnnotatedSentence().ToString());
         }
+
+        [Test]
+        public void TestGenerateAnnotatedSentence2()
+        {
+            var tree = new ParseTreeDrawable(new FileDescription("../../../trees2", "0002.dev"));
+            Assert.AreEqual(
+                "{english=We}{posTag=PRP} {english='re}{posTag=VBP} {english=about}{posTag=IN} {english=to}{posTag=TO} {english=see}{posTag=VB} {english=if}{posTag=IN} {english=advertising}{posTag=NN} {english=works}{posTag=VBZ} {english=.}{posTag=.}",
+                tree.GenerateAnnotatedSentence("english").ToString()); 
+            tree = new ParseTreeDrawable(new FileDescription("../../../trees2/", "0000.dev"));
+            Assert.AreEqual(
+                "{english=The}{posTag=DT} {english=complicated}{posTag=VBN} {english=language}{posTag=NN} {english=in}{posTag=IN} {english=the}{posTag=DT} {english=huge}{posTag=JJ} {english=new}{posTag=JJ} {english=law}{posTag=NN} {english=has}{posTag=VBZ} {english=muddied}{posTag=VBN} {english=the}{posTag=DT} {english=fight}{posTag=NN} {english=.}{posTag=.}",
+                tree.GenerateAnnotatedSentence("english").ToString());
+            tree = new ParseTreeDrawable(new FileDescription("../../../trees2/", "0001.dev"));
+            Assert.AreEqual(
+                "{english=The}{posTag=DT} {english=Ways}{posTag=NNP} {english=and}{posTag=CC} {english=Means}{posTag=NNP} {english=Committee}{posTag=NNP} {english=will}{posTag=MD} {english=hold}{posTag=VB} {english=a}{posTag=DT} {english=hearing}{posTag=NN} {english=on}{posTag=IN} {english=the}{posTag=DT} {english=bill}{posTag=NN} {english=next}{posTag=IN} {english=Tuesday}{posTag=NNP} {english=.}{posTag=.}",
+                tree.GenerateAnnotatedSentence("english").ToString());
+            tree = new ParseTreeDrawable(new FileDescription("../../../trees2", "0003.dev"));
+            Assert.AreEqual(
+                "{english=This}{posTag=DT} {english=time}{posTag=NN} {english=around}{posTag=RP} {english=,}{posTag=,} {english=they}{posTag=PRP} {english='re}{posTag=VBP} {english=moving}{posTag=VBG} {english=even}{posTag=RB} {english=faster}{posTag=RBR} {english=.}{posTag=.}",
+                tree.GenerateAnnotatedSentence("english").ToString());
+            tree = new ParseTreeDrawable(new FileDescription("../../../trees2", "0004.dev"));
+            Assert.AreEqual(
+                "{english=Shearson}{posTag=NNP} {english=Lehman}{posTag=NNP} {english=Hutton}{posTag=NNP} {english=Inc.}{posTag=NNP} {english=by}{posTag=IN} {english=yesterday}{posTag=NN} {english=afternoon}{posTag=NN} {english=had}{posTag=VBD} {english=already}{posTag=RB} {english=written}{posTag=VBN} {english=new}{posTag=JJ} {english=TV}{posTag=NN} {english=ads}{posTag=NNS} {english=.}{posTag=.}",
+                tree.GenerateAnnotatedSentence("english").ToString());
+            tree = new ParseTreeDrawable(new FileDescription("../../../trees2", "0005.dev"));
+            Assert.AreEqual(
+                "{english=This}{posTag=DT} {english=time}{posTag=NN} {english=,}{posTag=,} {english=the}{posTag=DT} {english=firms}{posTag=NNS} {english=were}{posTag=VBD} {english=ready}{posTag=JJ} {english=.}{posTag=.}",
+                tree.GenerateAnnotatedSentence("english").ToString());
+            tree = new ParseTreeDrawable(new FileDescription("../../../trees2", "0006.dev"));
+            Assert.AreEqual(
+                "{english=``}{posTag=``} {english=To}{posTag=TO} {english=maintain}{posTag=VB} {english=that}{posTag=DT} {english=dialogue}{posTag=NN} {english=is}{posTag=VBZ} {english=absolutely}{posTag=RB} {english=crucial}{posTag=JJ} {english=.}{posTag=.}",
+                tree.GenerateAnnotatedSentence("english").ToString());
+            tree = new ParseTreeDrawable(new FileDescription("../../../trees2", "0007.dev"));
+            Assert.AreEqual(
+                "{english=It}{posTag=PRP} {english=would}{posTag=MD} {english=have}{posTag=VB} {english=been}{posTag=VBN} {english=too}{posTag=RB} {english=late}{posTag=JJ} {english=to}{posTag=TO} {english=think}{posTag=VB} {english=about}{posTag=IN} {english=on}{posTag=IN} {english=Friday}{posTag=NNP} {english=.}{posTag=.}",
+                tree.GenerateAnnotatedSentence("english").ToString());
+            tree = new ParseTreeDrawable(new FileDescription("../../../trees2", "0008.dev"));
+            Assert.AreEqual(
+                "{english=We}{posTag=PRP} {english=had}{posTag=VBD} {english=to}{posTag=TO} {english=think}{posTag=VB} {english=about}{posTag=IN} {english=it}{posTag=PRP} {english=ahead}{posTag=RB} {english=of}{posTag=IN} {english=time}{posTag=NN} {english=.}{posTag=.} {english=''}{posTag=''}",
+                tree.GenerateAnnotatedSentence("english").ToString());
+            tree = new ParseTreeDrawable(new FileDescription("../../../trees2", "0009.dev"));
+            Assert.AreEqual(
+                "{english=It}{posTag=PRP} {english=goes}{posTag=VBZ} {english=on}{posTag=RB} {english=to}{posTag=TO} {english=plug}{posTag=VB} {english=a}{posTag=DT} {english=few}{posTag=JJ} {english=diversified}{posTag=JJ} {english=Fidelity}{posTag=NNP} {english=funds}{posTag=NNS} {english=by}{posTag=IN} {english=name}{posTag=NN} {english=.}{posTag=.}",
+                tree.GenerateAnnotatedSentence("english").ToString());
+        }
     }
 }

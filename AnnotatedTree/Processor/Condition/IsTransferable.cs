@@ -11,7 +11,7 @@ namespace AnnotatedTree.Processor.Condition
             this._secondLanguage = secondLanguage;
         }
 
-        public new bool Satisfies(ParseNodeDrawable parseNode)
+        public override bool Satisfies(ParseNodeDrawable parseNode)
         {
             if (base.Satisfies(parseNode))
             {

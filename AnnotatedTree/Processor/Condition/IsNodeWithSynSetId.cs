@@ -9,7 +9,7 @@ namespace AnnotatedTree.Processor.Condition
             this._id = id;
         }
 
-        public new bool Satisfies(ParseNodeDrawable parseNode)
+        public override bool Satisfies(ParseNodeDrawable parseNode)
         {
             if (base.Satisfies(parseNode))
             {
