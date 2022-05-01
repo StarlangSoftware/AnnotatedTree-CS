@@ -810,6 +810,30 @@ namespace AnnotatedTree
             }
         }
 
+        public void GenerateParseNode(ParseNode parseNode, bool surfaceForm)
+        {
+            if (NumberOfChildren() == 0)
+            {
+                if (surfaceForm)
+                {
+                    parseNode.SetData(new Symbol(GetLayerData(ViewLayerType.TURKISH_WORD)));
+                }
+                else
+                {
+                    parseNode.SetData(new Symbol(GetLayerInfo().GetMorphologicalParseAt(0).GetWord().GetName()));
+                }
+            }
+            else
+            {
+                parseNode.SetData(data);
+                for (var i = 0; i < NumberOfChildren(); i++)
+                {
+                    var newChild = new ParseNode();
+                    parseNode.AddChild(newChild);
+                    ((ParseNodeDrawable) children[i]).GenerateParseNode(newChild, surfaceForm);
+                }
+            }
+        }
         public override string ToString()
         {
             if (children.Count < 2)

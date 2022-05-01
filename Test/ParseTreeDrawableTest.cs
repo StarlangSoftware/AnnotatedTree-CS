@@ -25,6 +25,13 @@ namespace Test
         }
 
         [Test]
+        public void TestGenerateParseTree()
+        {
+            Assert.AreEqual("(S (NP (NP (ADJP (ADJP yeni) (ADJP Büyük))  (NP yasada))  (NP (ADJP karmaşık) (NP dil)) )  (VP (NP savaşı) (VP bulandırmıştır))  (. .)) ", tree0.GenerateParseTree(true).ToString());
+            Assert.AreEqual("(S (NP (NP (ADJP (ADJP yeni) (ADJP büyük))  (NP yasa))  (NP (ADJP karmaşık) (NP dil)) )  (VP (NP savaş) (VP bulan))  (. .)) ", tree0.GenerateParseTree(false).ToString());
+        }
+
+        [Test]
         public void TestMaxDepth()
         {
             Assert.AreEqual(5, tree0.MaxDepth());

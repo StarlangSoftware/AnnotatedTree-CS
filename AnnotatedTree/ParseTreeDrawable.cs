@@ -337,6 +337,12 @@ namespace AnnotatedTree
             return sentence;
         }
 
+        public ParseTree.ParseTree GenerateParseTree(bool surfaceForm)
+        {
+            var result = new ParseTree.ParseTree(new ParseNode(root.GetData()));
+            ((ParseNodeDrawable)root).GenerateParseNode(result.GetRoot(), surfaceForm);
+            return result;
+        }
         public List<ParseNodeDrawable> ExtractNodesWithVerbs(WordNet.WordNet wordNet)
         {
             var nodeDrawableCollector =
