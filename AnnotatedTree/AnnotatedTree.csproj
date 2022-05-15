@@ -9,7 +9,7 @@
 
     <ItemGroup>
       <PackageReference Include="NlpToolkit-AnnotatedSentence" Version="1.0.20" />
-      <PackageReference Include="NlpToolkit-ParseTree" Version="1.0.6" />
+      <PackageReference Include="NlpToolkit-ParseTree" Version="1.0.8" />
       <PackageReference Include="NlpToolkit-Util" Version="1.0.4" />
     </ItemGroup>
 

@@ -12,7 +12,6 @@ namespace AnnotatedTree
     public class ParseTreeDrawable : ParseTree.ParseTree
     {
         private FileDescription _fileDescription;
-        private string _name;
 
         public ParseTreeDrawable(string path, string rawFileName) : this(new FileDescription(path, rawFileName))
         {
@@ -89,16 +88,6 @@ namespace AnnotatedTree
             }
 
             streamReader.Close();
-        }
-
-        public void SetName(string name)
-        {
-            this._name = name;
-        }
-
-        public string GetName()
-        {
-            return _name;
         }
 
         public void NextTree(int count)

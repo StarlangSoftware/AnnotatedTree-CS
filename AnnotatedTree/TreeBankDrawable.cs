@@ -24,21 +24,6 @@ namespace AnnotatedTree
             this.parseTrees = parseTrees;
         }
 
-        private string RemovePath(string fileName)
-        {
-            if (fileName.Contains("/"))
-            {
-                return fileName.Substring(fileName.LastIndexOf("/", StringComparison.Ordinal) + 1);
-            }
-
-            if (fileName.Contains("\\"))
-            {
-                return fileName.Substring(fileName.LastIndexOf("\\", StringComparison.Ordinal) + 1);
-            }
-
-            return fileName;
-        }
-
         public void ReadTree(string path, string fileName)
         {
             var parseTree = new ParseTreeDrawable(fileName);
@@ -107,9 +92,9 @@ namespace AnnotatedTree
         public TreeBankDrawable(string path, string extension, int from, int to)
         {
             parseTrees = new List<ParseTree.ParseTree>();
-            for (int i = from; i <= to; i++)
+            for (var i = from; i <= to; i++)
             {
-                ParseTreeDrawable parseTree = new ParseTreeDrawable(new FileDescription(path, extension, i));
+                var parseTree = new ParseTreeDrawable(new FileDescription(path, extension, i));
                 if (parseTree.GetRoot() != null)
                 {
                     parseTrees.Add(parseTree);
