@@ -5,6 +5,12 @@ namespace AnnotatedTree.Processor.Condition
 {
     public class IsNumber : IsLeafNode
     {
+        /// <summary>
+        /// Checks if the node is a leaf node and contains numerals as the data and its parent has the tag CD.
+        /// </summary>
+        /// <param name="parseNode">Parse node to check.</param>
+        /// <returns>True if the node is a leaf node and contains numerals as the data and its parent has the tag CD, false
+        /// otherwise.</returns>
         public override bool Satisfies(ParseNodeDrawable parseNode) {
             if (base.Satisfies(parseNode)){
                 string data = parseNode.GetLayerData(ViewLayerType.ENGLISH_WORD);

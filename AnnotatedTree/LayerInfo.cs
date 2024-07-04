@@ -11,6 +11,14 @@ namespace AnnotatedTree
     {
         private readonly Dictionary<ViewLayerType, WordLayer> _layers;
 
+        /// <summary>
+        /// Constructs the layer information from the given string. Layers are represented as
+        /// {layername1=layervalue1}{layername2=layervalue2}...{layernamek=layervaluek} where layer name is one of the
+        /// following: turkish, persian, english, morphologicalAnalysis, metaMorphemes, metaMorphemesMoved, dependency,
+        /// semantics, namedEntity, propBank, englishPropbank, englishSemantics, shallowParse. Splits the string w.r.t.
+        /// parentheses and constructs layer objects and put them layers map accordingly.
+        /// </summary>
+        /// <param name="info">Line consisting of layer info.</param>
         public LayerInfo(string info)
         {
             var splitLayers = info.Split('[', ']', '{', '}');
@@ -121,6 +129,13 @@ namespace AnnotatedTree
             return new LayerInfo(GetLayerDescription());
         }
 
+        /// <summary>
+        /// Changes the given layer info with the given string layer value. For all layers new layer object is created and
+        /// replaces the original object. For turkish layer, it also destroys inflectional_group, part_of_speech,
+        /// meta_morpheme, meta_morpheme_moved and semantics layers. For persian layer, it also destroys the semantics layer.
+        /// </summary>
+        /// <param name="viewLayer">Layer name.</param>
+        /// <param name="layerValue">New layer value.</param>
         public void SetLayerData(ViewLayerType viewLayer, string layerValue)
         {
             switch (viewLayer)
@@ -176,22 +191,46 @@ namespace AnnotatedTree
             }
         }
 
+        /// <summary>
+        /// Updates the inflectional_group and part_of_speech layers according to the given parse.
+        /// </summary>
+        /// <param name="parse">New parse to update layers.</param>
         public void SetMorphologicalAnalysis(MorphologicalParse parse)
         {
             _layers[ViewLayerType.INFLECTIONAL_GROUP] = new MorphologicalAnalysisLayer(parse.ToString());
             _layers[ViewLayerType.PART_OF_SPEECH] = new MorphologicalAnalysisLayer(parse.ToString());
         }
 
+        /// <summary>
+        /// Updates the metamorpheme layer according to the given parse.
+        /// </summary>
+        /// <param name="parse">New parse to update layer.</param>
         public void SetMetaMorphemes(MetamorphicParse parse)
         {
             _layers[ViewLayerType.META_MORPHEME] = new MetaMorphemeLayer(parse.ToString());
         }
 
+        /// <summary>
+        /// Checks if the given layer exists.
+        /// </summary>
+        /// <param name="viewLayerType">Layer name</param>
+        /// <returns>True if the layer exists, false otherwise.</returns>
         public bool LayerExists(ViewLayerType viewLayerType)
         {
             return _layers.ContainsKey(viewLayerType);
         }
 
+        /// <summary>
+        /// Two level layer check method. For turkish, persian and english_semantics layers, if the layer does not exist,
+        /// returns english layer. For part_of_speech, inflectional_group, meta_morpheme, semantics, propbank, shallow_parse,
+        /// english_propbank layers, if the layer does not exist, it checks turkish layer. For meta_morpheme_moved, if the
+        /// layer does not exist, it checks meta_morpheme layer.
+        /// </summary>
+        /// <param name="viewLayer">Layer to be checked.</param>
+        /// <returns>Returns the original layer if the layer exists. For turkish, persian and english_semantics layers, if the
+        /// layer  does not exist, returns english layer. For part_of_speech, inflectional_group, meta_morpheme, semantics,
+        /// propbank,  shallow_parse, english_propbank layers, if the layer does not exist, it checks turkish layer
+        /// recursively. For meta_morpheme_moved, if the layer does not exist, it checks meta_morpheme layer recursively.</returns>
         public ViewLayerType CheckLayer(ViewLayerType viewLayer)
         {
             switch (viewLayer)
@@ -225,6 +264,10 @@ namespace AnnotatedTree
             return viewLayer;
         }
 
+        /// <summary>
+        /// Returns number of words in the Turkish or Persian layer, whichever exists.
+        /// </summary>
+        /// <returns>Number of words in the Turkish or Persian layer, whichever exists.</returns>
         public int GetNumberOfWords()
         {
             if (_layers.ContainsKey(ViewLayerType.TURKISH_WORD))
@@ -240,6 +283,13 @@ namespace AnnotatedTree
             return 0;
         }
 
+        /// <summary>
+        /// Returns the layer value at the given index.
+        /// </summary>
+        /// <param name="viewLayerType">Layer for which the value at the given word index will be returned.</param>
+        /// <param name="index">Word Position of the layer value.</param>
+        /// <param name="layerName">Name of the layer.</param>
+        /// <returns>Layer info at word position index for a multiword layer.</returns>
         private string GetMultiWordAt(ViewLayerType viewLayerType, int index, string layerName)
         {
             if (_layers.ContainsKey(viewLayerType))
@@ -262,11 +312,20 @@ namespace AnnotatedTree
             return null;
         }
 
+        /// <summary>
+        /// Layers may contain multiple Turkish words. This method returns the Turkish word at position index.
+        /// </summary>
+        /// <param name="index">Position of the Turkish word.</param>
+        /// <returns>The Turkish word at position index.</returns>
         public string GetTurkishWordAt(int index)
         {
             return GetMultiWordAt(ViewLayerType.TURKISH_WORD, index, "turkish");
         }
 
+        /// <summary>
+        /// Returns number of meanings in the Turkish layer.
+        /// </summary>
+        /// <returns>Number of meanings in the Turkish layer.</returns>
         public int GetNumberOfMeanings()
         {
             if (_layers.ContainsKey(ViewLayerType.SEMANTICS))
@@ -277,16 +336,32 @@ namespace AnnotatedTree
             return 0;
         }
 
+        /// <summary>
+        /// Layers may contain multiple semantic information corresponding to multiple Turkish words. This method returns
+        /// the sense id at position index.
+        /// </summary>
+        /// <param name="index">Position of the Turkish word.</param>
+        /// <returns>The Turkish sense id at position index.</returns>
         public string GetSemanticAt(int index)
         {
             return GetMultiWordAt(ViewLayerType.SEMANTICS, index, "semantics");
         }
 
+        /// <summary>
+        /// Layers may contain multiple shallow parse information corresponding to multiple Turkish words. This method
+        /// returns the shallow parse tag at position index.
+        /// </summary>
+        /// <param name="index">Position of the Turkish word.</param>
+        /// <returns>The shallow parse tag at position index.</returns>
         public string GetShallowParseAt(int index)
         {
             return GetMultiWordAt(ViewLayerType.SHALLOW_PARSE, index, "shallowParse");
         }
 
+        /// <summary>
+        /// Returns the Turkish PropBank argument info.
+        /// </summary>
+        /// <returns>Turkish PropBank argument info.</returns>
         public Argument GetArgument()
         {
             if (_layers.ContainsKey(ViewLayerType.PROPBANK))
@@ -303,6 +378,12 @@ namespace AnnotatedTree
             return null;
         }
 
+        /// <summary>
+        /// A word may have multiple English propbank info. This method returns the English PropBank argument info at
+        /// position index.
+        /// </summary>
+        /// <param name="index">Position of the argument</param>
+        /// <returns>English PropBank argument info at position index.</returns>
         public Argument GetArgumentAt(int index)
         {
             if (_layers.ContainsKey(ViewLayerType.ENGLISH_PROPBANK))
@@ -318,6 +399,12 @@ namespace AnnotatedTree
             return null;
         }
 
+        /// <summary>
+        /// Layers may contain multiple morphological parse information corresponding to multiple Turkish words. This method
+        /// returns the morphological parse at position index.
+        /// </summary>
+        /// <param name="index">Position of the Turkish word.</param>
+        /// <returns>The morphological parse at position index.</returns>
         public MorphologicalParse GetMorphologicalParseAt(int index)
 
         {
@@ -336,6 +423,12 @@ namespace AnnotatedTree
             return null;
         }
 
+        /// <summary>
+        /// Layers may contain multiple metamorphic parse information corresponding to multiple Turkish words. This method
+        /// returns the metamorphic parse at position index.
+        /// </summary>
+        /// <param name="index">Position of the Turkish word.</param>
+        /// <returns>The metamorphic parse at position index.</returns>
         public MetamorphicParse GetMetamorphicParseAt(int index)
         {
             if (_layers.ContainsKey(ViewLayerType.META_MORPHEME))
@@ -353,6 +446,12 @@ namespace AnnotatedTree
             return null;
         }
 
+        /// <summary>
+        /// Layers may contain multiple metamorphemes corresponding to one or multiple Turkish words. This method
+        /// returns the metamorpheme at position index.
+        /// </summary>
+        /// <param name="index">Position of the metamorpheme.</param>
+        /// <returns>The metamorpheme at position index.</returns>
         public string GetMetaMorphemeAtIndex(int index)
         {
             if (_layers.ContainsKey(ViewLayerType.META_MORPHEME))
@@ -370,6 +469,12 @@ namespace AnnotatedTree
             return null;
         }
 
+        /// <summary>
+        /// Layers may contain multiple metamorphemes corresponding to one or multiple Turkish words. This method
+        /// returns all metamorphemes from position index.
+        /// </summary>
+        /// <param name="index">Start position of the metamorpheme.</param>
+        /// <returns>All metamorphemes from position index.</returns>
         public string GetMetaMorphemeFromIndex(int index)
         {
             if (_layers.ContainsKey(ViewLayerType.META_MORPHEME))
@@ -387,6 +492,11 @@ namespace AnnotatedTree
             return null;
         }
 
+        /// <summary>
+        /// For layers with multiple item information, this method returns total items in that layer.
+        /// </summary>
+        /// <param name="viewLayer">Layer name</param>
+        /// <returns>Total items in the given layer.</returns>
         public int GetLayerSize(ViewLayerType viewLayer)
         {
             if (_layers[viewLayer] is MultiWordMultiItemLayer<object>)
@@ -402,6 +512,12 @@ namespace AnnotatedTree
             return 0;
         }
 
+        /// <summary>
+        /// For layers with multiple item information, this method returns the item at position index.
+        /// </summary>
+        /// <param name="viewLayer">Layer name</param>
+        /// <param name="index">Position of the item.</param>
+        /// <returns>The item at position index.</returns>
         public string GetLayerInfoAt(ViewLayerType viewLayer, int index)
         {
             switch (viewLayer)
@@ -435,6 +551,10 @@ namespace AnnotatedTree
             return null;
         }
 
+        /// <summary>
+        /// Returns the string form of all layer information except part_of_speech layer.
+        /// </summary>
+        /// <returns>The string form of all layer information except part_of_speech layer.</returns>
         public string GetLayerDescription()
         {
             var result = "";
@@ -449,6 +569,11 @@ namespace AnnotatedTree
             return result;
         }
 
+        /// <summary>
+        /// Returns the layer info for the given layer.
+        /// </summary>
+        /// <param name="viewLayer">Layer name.</param>
+        /// <returns>Layer info for the given layer.</returns>
         public string GetLayerData(ViewLayerType viewLayer)
         {
             if (_layers.ContainsKey(viewLayer))
@@ -459,12 +584,22 @@ namespace AnnotatedTree
             return null;
         }
 
+        /// <summary>
+        /// Returns the layer info for the given layer, if that layer exists. Otherwise, it returns the fallback layer info
+        /// determined by the checkLayer.
+        /// </summary>
+        /// <param name="viewLayer">Layer name</param>
+        /// <returns>Layer info for the given layer if it exists. Otherwise, it returns the fallback layer info determined by
+        /// the checkLayer.</returns>
         public string GetRobustLayerData(ViewLayerType viewLayer)
         {
             viewLayer = CheckLayer(viewLayer);
             return GetLayerData(viewLayer);
         }
 
+        /// <summary>
+        /// Initializes the metamorphemesmoved layer with metamorpheme layer except the root word.
+        /// </summary>
         private void UpdateMetaMorphemesMoved()
         {
             if (_layers.ContainsKey(ViewLayerType.META_MORPHEME))
@@ -483,42 +618,67 @@ namespace AnnotatedTree
             }
         }
 
+        /// <summary>
+        /// Removes the given layer from hash map.
+        /// </summary>
+        /// <param name="layerType">Layer to be removed.</param>
         public void RemoveLayer(ViewLayerType layerType)
         {
             _layers.Remove(layerType);
         }
 
+        /// <summary>
+        /// Removes metamorpheme and metamorphemesmoved layers.
+        /// </summary>
         public void MetaMorphemeClear()
         {
             _layers.Remove(ViewLayerType.META_MORPHEME);
             _layers.Remove(ViewLayerType.META_MORPHEME_MOVED);
         }
 
+        /// <summary>
+        /// Removes English layer.
+        /// </summary>
         public void EnglishClear()
         {
             _layers.Remove(ViewLayerType.ENGLISH_WORD);
         }
 
+        /// <summary>
+        /// Removes the dependency layer.
+        /// </summary>
         public void DependencyClear()
         {
             _layers.Remove(ViewLayerType.DEPENDENCY);
         }
 
+        /// <summary>
+        /// Removed metamorphemesmoved layer.
+        /// </summary>
         public void MetaMorphemesMovedClear()
         {
             _layers.Remove(ViewLayerType.META_MORPHEME_MOVED);
         }
 
+        /// <summary>
+        /// Removes the Turkish semantic layer.
+        /// </summary>
         public void SemanticClear()
         {
             _layers.Remove(ViewLayerType.SEMANTICS);
         }
 
+        /// <summary>
+        /// Removes the English semantic layer.
+        /// </summary>
         public void EnglishSemanticClear()
         {
             _layers.Remove(ViewLayerType.ENGLISH_SEMANTICS);
         }
 
+        /// <summary>
+        /// Removes the morphological analysis, part of speech, metamorpheme, and metamorphemesmoved layers.
+        /// </summary>
         public void MorphologicalAnalysisClear()
         {
             _layers.Remove(ViewLayerType.INFLECTIONAL_GROUP);
@@ -527,6 +687,11 @@ namespace AnnotatedTree
             _layers.Remove(ViewLayerType.META_MORPHEME_MOVED);
         }
 
+        /// <summary>
+        /// Removes the metamorpheme at position index.
+        /// </summary>
+        /// <param name="index">Position of the metamorpheme to be removed.</param>
+        /// <returns>Metamorphemes concatenated as a string after the removed metamorpheme.</returns>
         public MetamorphicParse MetaMorphemeRemove(int index)
 
         {
@@ -545,6 +710,10 @@ namespace AnnotatedTree
             return removedParse;
         }
 
+        /// <summary>
+        /// Checks if the last inflectional group contains VERB tag.
+        /// </summary>
+        /// <returns>True if the last inflectional group contains VERB tag, false otherwise.</returns>
         public bool IsVerbal()
         {
             if (_layers.ContainsKey(ViewLayerType.INFLECTIONAL_GROUP))
@@ -555,6 +724,10 @@ namespace AnnotatedTree
             return false;
         }
 
+        /// <summary>
+        /// Checks if the last verbal inflectional group contains ZERO tag.
+        /// </summary>
+        /// <returns>True if the last verbal inflectional group contains ZERO tag, false otherwise.</returns>
         public bool IsNominal()
         {
             if (_layers.ContainsKey(ViewLayerType.INFLECTIONAL_GROUP))
@@ -565,6 +738,12 @@ namespace AnnotatedTree
             return false;
         }
 
+        /// <summary>
+        /// Creates an array list of LayerInfo objects, where each object correspond to one word in the tree node. Turkish
+        /// words, morphological parses, metamorpheme parses, semantic senses, shallow parses are divided into corresponding
+        /// words. Named entity tags and propbank arguments are the same for all words.
+        /// </summary>
+        /// <returns>An array list of LayerInfo objects created from the layer info of the node.</returns>
         public List<LayerInfo> DivideIntoWords()
         {
             var result = new List<LayerInfo>();
@@ -621,6 +800,12 @@ namespace AnnotatedTree
             return result;
         }
 
+        /// <summary>
+        /// Converts layer info of the word at position wordIndex to an AnnotatedWord. Layers are converted to their
+        /// counterparts in the AnnotatedWord.
+        /// </summary>
+        /// <param name="wordIndex">Index of the word to be converted.</param>
+        /// <returns>Converted annotatedWord</returns>
         public AnnotatedWord ToAnnotatedWord(int wordIndex)
         {
             AnnotatedWord annotatedWord = new AnnotatedWord(GetTurkishWordAt(wordIndex));

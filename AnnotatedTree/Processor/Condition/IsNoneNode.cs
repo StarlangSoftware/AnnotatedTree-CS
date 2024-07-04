@@ -10,6 +10,11 @@ namespace AnnotatedTree.Processor.Condition
             this._secondLanguage = secondLanguage;
         }
 
+        /// <summary>
+        /// Checks if the data of the parse node is '*NONE*'.
+        /// </summary>
+        /// <param name="parseNode">Parse node to check.</param>
+        /// <returns>True if the data of the parse node is '*NONE*', false otherwise.</returns>
         public override bool Satisfies(ParseNodeDrawable parseNode) {
             if (base.Satisfies(parseNode)){
                 var data = parseNode.GetLayerData(_secondLanguage);

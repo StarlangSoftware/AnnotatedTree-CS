@@ -8,11 +8,20 @@ namespace AnnotatedTree.Processor.LayerExist
     {
         private readonly ViewLayerType _viewLayerType;
 
+        /// <summary>
+        /// Constructor for ContainsLayerInformation class. Sets the viewLayerType attribute.
+        /// </summary>
+        /// <param name="viewLayerType">Layer for which check is done.</param>
         public ContainsLayerInformation(ViewLayerType viewLayerType)
         {
             this._viewLayerType = viewLayerType;
         }
 
+        /// <summary>
+        /// Checks if all leaf nodes in the leafList contains the given layer information.
+        /// </summary>
+        /// <param name="leafList">Array list storing the leaf nodes.</param>
+        /// <returns>True if all leaf nodes in the leafList contains the given layer information, false otherwise.</returns>
         public bool Satisfies(List<ParseNodeDrawable> leafList)
         {
             foreach (var parseNode in leafList){

@@ -6,16 +6,26 @@ namespace AnnotatedTree.Layer
 {
     public class MorphologicalAnalysisLayer : MultiWordMultiItemLayer<MorphologicalParse>
     {
+        /// <summary>
+        /// Constructor for the morphological analysis layer. Sets the morphological parse information for multiple words in
+        /// the node.
+        /// </summary>
+        /// <param name="layerValue">Layer value for the morphological parse information. Consists of morphological parse information
+        ///                   of multiple words separated via space character.</param>
         public MorphologicalAnalysisLayer(string layerValue)
         {
-            layerName = "morphologicalAnalysis";
+            LayerName = "morphologicalAnalysis";
             SetLayerValue(layerValue);
         }
 
+        /// <summary>
+        /// Sets the layer value to the string form of the given morphological parse.
+        /// </summary>
+        /// <param name="layerValue">New morphological parse.</param>
         public override void SetLayerValue(string layerValue)
         {
             this.items = new List<MorphologicalParse>();
-            this.layerValue = layerValue;
+            this.LayerValue = layerValue;
             if (layerValue != null)
             {
                 var splitWords = layerValue.Split(" ");
@@ -26,13 +36,24 @@ namespace AnnotatedTree.Layer
             }
         }
 
+        /// <summary>
+        /// Sets the layer value to the string form of the given morphological parse.
+        /// </summary>
+        /// <param name="parse">New morphological parse.</param>
         public void SetLayerValue(MorphologicalParse parse)
         {
-            layerValue = parse.GetTransitionList();
+            LayerValue = parse.GetTransitionList();
             items = new List<MorphologicalParse>();
             items.Add(parse);
         }
 
+        /// <summary>
+        ///  Returns the total number of morphological tags (for PART_OF_SPEECH) or inflectional groups
+        /// (for INFLECTIONAL_GROUP) in the words in the node.
+        /// </summary>
+        /// <param name="viewLayer">Layer type.</param>
+        /// <returns>Total number of morphological tags (for PART_OF_SPEECH) or inflectional groups (for INFLECTIONAL_GROUP)
+        /// in the words in the node.</returns>
         public override int GetLayerSize(ViewLayerType viewLayer)
         {
             int size;
@@ -59,6 +80,13 @@ namespace AnnotatedTree.Layer
             }
         }
 
+        /// <summary>
+        /// Returns the morphological tag (for PART_OF_SPEECH) or inflectional group (for INFLECTIONAL_GROUP) at position
+        /// index.
+        /// </summary>
+        /// <param name="viewLayer">Layer type.</param>
+        /// <param name="index">Position of the morphological tag (for PART_OF_SPEECH) or inflectional group (for INFLECTIONAL_GROUP)</param>
+        /// <returns>The morphological tag (for PART_OF_SPEECH) or inflectional group (for INFLECTIONAL_GROUP)</returns>
         public override string GetLayerInfoAt(ViewLayerType viewLayer, int index)
         {
             int size;
@@ -95,27 +123,35 @@ namespace AnnotatedTree.Layer
             return null;
         }
 
+        /// <summary>
+        /// Checks if the last inflectional group contains VERB tag.
+        /// </summary>
+        /// <returns>True if the last inflectional group contains VERB tag, false otherwise.</returns>
         public bool IsVerbal()
         {
             const string dbLabel = "^DB+";
             const string needle = "VERB+";
             string haystack;
-            if (layerValue.Contains(dbLabel))
-                haystack = layerValue.Substring(layerValue.LastIndexOf(dbLabel) + 4);
+            if (LayerValue.Contains(dbLabel))
+                haystack = LayerValue.Substring(LayerValue.LastIndexOf(dbLabel) + 4);
             else
-                haystack = layerValue;
+                haystack = LayerValue;
             return haystack.Contains(needle);
         }
 
+        /// <summary>
+        /// Checks if the last verbal inflectional group contains ZERO tag.
+        /// </summary>
+        /// <returns>True if the last verbal inflectional group contains ZERO tag, false otherwise.</returns>
         public bool IsNominal()
         {
             const string dbLabel = "^DB+VERB+";
             const string needle = "ZERO+";
             string haystack;
-            if (layerValue.Contains(dbLabel))
-                haystack = layerValue.Substring(layerValue.LastIndexOf(dbLabel) + 9);
+            if (LayerValue.Contains(dbLabel))
+                haystack = LayerValue.Substring(LayerValue.LastIndexOf(dbLabel) + 9);
             else
-                haystack = layerValue;
+                haystack = LayerValue;
             return haystack.Contains(needle);
         }
     }

@@ -21,6 +21,14 @@ namespace AnnotatedTree
         private static readonly List<string> SentenceLabels =
             new List<string>(new[] {"SINV", "SBARQ", "SBAR", "SQ", "S"});
 
+        /// <summary>
+        /// Constructs a ParseNodeDrawable from a single line. If the node is a leaf node, it only sets the data. Otherwise,
+        /// splits the line w.r.t. spaces and parenthesis and calls itself recursively to generate its child parseNodes.
+        /// </summary>
+        /// <param name="parent">The parent node of this node.</param>
+        /// <param name="line">The input line to create this parseNode.</param>
+        /// <param name="isLeaf">True, if this node is a leaf node; false otherwise.</param>
+        /// <param name="depth">Depth of the node.</param>
         public ParseNodeDrawable(ParseNodeDrawable parent, string line, bool isLeaf, int depth)
         {
             var parenthesisCount = 0;
@@ -81,10 +89,21 @@ namespace AnnotatedTree
             }
         }
 
+        /// <summary>
+        /// Another simple constructor for ParseNode. It only takes input the data, and sets it.
+        /// </summary>
+        /// <param name="data">Data for this node.</param>
         public ParseNodeDrawable(Symbol data) : base(data)
         {
         }
 
+        /// <summary>
+        /// Another constructor for ParseNodeDrawable. Sets the parent to the given parent, and adds given child as a
+        /// single child, and sets the given symbol as data.
+        /// </summary>
+        /// <param name="parent">Parent of this node.</param>
+        /// <param name="child">Single child of this node.</param>
+        /// <param name="symbol">Symbol of this node.</param>
         public ParseNodeDrawable(ParseNodeDrawable parent, ParseNodeDrawable child, string symbol)
         {
             this.children = new List<ParseNode>();
@@ -105,11 +124,20 @@ namespace AnnotatedTree
             return result;
         }
 
+        /// <summary>
+        /// Accessor for layers attribute
+        /// </summary>
+        /// <returns>Layers attribute</returns>
         public LayerInfo GetLayerInfo()
         {
             return layers;
         }
 
+        /// <summary>
+        /// Returns the data. Either the node is a leaf node, in which case English word layer is returned; or the node is
+        /// a nonleaf node, in which case the node tag is returned.
+        /// </summary>
+        /// <returns>English word for leaf node, constituency tag for non-leaf node.</returns>
         public new Symbol GetData()
         {
             if (layers == null)
@@ -120,11 +148,18 @@ namespace AnnotatedTree
             return new Symbol(GetLayerData(ViewLayerType.ENGLISH_WORD));
         }
 
+        /// <summary>
+        /// Clears the layers hash map.
+        /// </summary>
         public void ClearLayers()
         {
             layers = new LayerInfo();
         }
 
+        /// <summary>
+        /// Recursive method to clear a given layer.
+        /// </summary>
+        /// <param name="layerType">Name of the layer to be cleared</param>
         public void ClearLayer(ViewLayerType layerType)
         {
             if (children.Count == 0 && LayerExists(layerType))
@@ -138,17 +173,29 @@ namespace AnnotatedTree
             }
         }
 
+        /// <summary>
+        /// Clears the node tag.
+        /// </summary>
         public void ClearData()
         {
             data = null;
         }
 
+        /// <summary>
+        /// Setter for the data attribute and also clears all layers.
+        /// </summary>
+        /// <param name="data">New data field.</param>
         public void SetDataAndClearLayers(Symbol data)
         {
             base.SetData(data);
             layers = null;
         }
 
+        /// <summary>
+        /// Mutator for the data field. If the layers is null, its sets the data field, otherwise it sets the English layer
+        /// to the given value.
+        /// </summary>
+        /// <param name="newData">Data to be set.</param>
         public new void SetData(Symbol newData)
         {
             if (layers == null)
@@ -161,6 +208,11 @@ namespace AnnotatedTree
             }
         }
 
+        /// <summary>
+        /// Returns the layer value of the head child of this node.
+        /// </summary>
+        /// <param name="viewLayerType">Layer name</param>
+        /// <returns>Layer value of the head child of this node.</returns>
         public string HeadWord(ViewLayerType viewLayerType)
         {
             if (children.Count > 0)
@@ -171,6 +223,11 @@ namespace AnnotatedTree
             return GetLayerData(viewLayerType);
         }
 
+        /// <summary>
+        /// Accessor for the data or layers attribute.
+        /// </summary>
+        /// <returns>If data is not null, this node is a non-leaf node, it returns the data field. Otherwise, this node is a
+        /// leaf node, it returns the layer description.</returns>
         public string GetLayerData()
         {
             if (data != null)
@@ -178,6 +235,11 @@ namespace AnnotatedTree
             return layers.GetLayerDescription();
         }
 
+        /// <summary>
+        /// Returns the layer value of a given layer.
+        /// </summary>
+        /// <param name="viewLayer">Layer name</param>
+        /// <returns>Value of the given layer</returns>
         public string GetLayerData(ViewLayerType viewLayer)
         {
             if (viewLayer == ViewLayerType.WORD || layers == null)
@@ -185,11 +247,22 @@ namespace AnnotatedTree
             return layers.GetLayerData(viewLayer);
         }
 
+        /// <summary>
+        /// Accessor for the depth attribute
+        /// </summary>
+        /// <returns>Depth attribute</returns>
         public int GetDepth()
         {
             return depth;
         }
 
+        /// <summary>
+        /// Returns the number of structural agreement between this node and the given node recursively. Two nodes agree in
+        /// structural manner if they have the same number of children and all of their children have the same tags in the
+        /// same order.
+        /// </summary>
+        /// <param name="parseNode">Parse node to compare in structural manner</param>
+        /// <returns>The number of structural agreement between this node and the given node recursively.</returns>
         public int StructureAgreementCount(ParseNodeDrawable parseNode)
         {
             if (children.Count > 1)
@@ -242,6 +315,13 @@ namespace AnnotatedTree
             return 0;
         }
 
+        /// <summary>
+        /// Returns the number of gloss agreements between this node and the given node recursively. Two nodes agree in
+        /// glosses if they are both leaf nodes and their layer info are the same.
+        /// </summary>
+        /// <param name="parseNode">Parse node to compare in gloss manner</param>
+        /// <param name="viewLayerType">Layer name to compare</param>
+        /// <returns>The number of gloss agreements between this node and the given node recursively.</returns>
         public int GlossAgreementCount(ParseNodeDrawable parseNode, ViewLayerType viewLayerType)
         {
             if (children.Count == 0)
@@ -272,6 +352,11 @@ namespace AnnotatedTree
             return sum;
         }
 
+        /// <summary>
+        /// Replaces a given old child with the given new child.
+        /// </summary>
+        /// <param name="oldChild">Old child to be replaced</param>
+        /// <param name="newChild">New child which replaces old child</param>
         public void ReplaceChild(ParseNodeDrawable oldChild, ParseNodeDrawable newChild)
         {
             newChild.UpdateDepths(this.depth + 1);
@@ -279,6 +364,10 @@ namespace AnnotatedTree
             children[children.IndexOf(oldChild)] = newChild;
         }
 
+        /// <summary>
+        /// Recursive method which updates the depth attribute
+        /// </summary>
+        /// <param name="newDepth">Current depth to set.</param>
         public void UpdateDepths(int newDepth)
         {
             this.depth = newDepth;
@@ -289,6 +378,10 @@ namespace AnnotatedTree
             }
         }
 
+        /// <summary>
+        /// Calculates the maximum depth of the subtree rooted from this node.
+        /// </summary>
+        /// <returns>The maximum depth of the subtree rooted from this node.</returns>
         public int MaxDepth()
         {
             int currentDepth = this.depth;
@@ -302,6 +395,11 @@ namespace AnnotatedTree
             return currentDepth;
         }
 
+        /// <summary>
+        /// Recursive method that checks if the current node satisfies the conditions in the given search node.
+        /// </summary>
+        /// <param name="node">Node containing the search condition</param>
+        /// <returns>True if the node satisfies the condition, false otherwise.</returns>
         public bool Satisfy(ParseNodeSearchable node)
         {
             int i;
@@ -398,6 +496,10 @@ namespace AnnotatedTree
             return true;
         }
 
+        /// <summary>
+        /// Recursive method that updates all pos tags in the leaf nodes according to the morphological tag in those leaf
+        /// nodes.
+        /// </summary>
         public void UpdatePosTags()
         {
             if (children.Count == 1 && children[0].IsLeaf() && !children[0].IsDummyNode())
@@ -499,6 +601,10 @@ namespace AnnotatedTree
             }
         }
 
+        /// <summary>
+        /// Returns all symbols in this node.
+        /// </summary>
+        /// <returns>All symbols in the children of this node.</returns>
         public List<Symbol> GetChildrenSymbols()
         {
             var childrenSymbols = new List<Symbol>();
@@ -534,6 +640,10 @@ namespace AnnotatedTree
             }
         }
 
+        /// <summary>
+        /// Recursive method that returns the concatenation of all pos tags of all descendants of this node.
+        /// </summary>
+        /// <returns>The concatenation of all pos tags of all descendants of this node.</returns>
         public new string AncestorString()
         {
             if (parent == null)
@@ -565,6 +675,13 @@ namespace AnnotatedTree
             }
         }
 
+        /// <summary>
+        /// Recursive method that checks if all nodes in the subtree rooted with this node has the annotation in the given
+        /// layer.
+        /// </summary>
+        /// <param name="viewLayerType">Layer name</param>
+        /// <returns>True if all nodes in the subtree rooted with this node has the annotation in the given layer, false
+        /// otherwise.</returns>
         public bool LayerExists(ViewLayerType viewLayerType)
         {
             if (children.Count == 0)
@@ -588,6 +705,11 @@ namespace AnnotatedTree
             return false;
         }
 
+        /// <summary>
+        /// Checks if the current node is a dummy node or not. A node is a dummy node if its data contains '*', or its
+        /// data is '0' and its parent is '-NONE-'.
+        /// </summary>
+        /// <returns>True if the current node is a dummy node, false otherwise.</returns>
         public new bool IsDummyNode()
         {
             var currentData = GetLayerData(ViewLayerType.ENGLISH_WORD);
@@ -607,6 +729,12 @@ namespace AnnotatedTree
             return false;
         }
 
+        /// <summary>
+        /// Recursive method that returns all nodes in the subtree rooted with this node those satisfy the conditions in the
+        /// given tree.
+        /// </summary>
+        /// <param name="tree">Tree containing the search condition</param>
+        /// <returns>All nodes in the subtree rooted with this node those satisfy the conditions in the given tree.</returns>
         public List<ParseNodeDrawable> Satisfy(ParseTreeSearchable tree)
         {
             List<ParseNodeDrawable> result = new List<ParseNodeDrawable>();
@@ -623,6 +751,12 @@ namespace AnnotatedTree
             return result;
         }
 
+        /// <summary>
+        /// Checks if all nodes in the subtree rooted with this node has annotation with the given layer.
+        /// </summary>
+        /// <param name="viewLayerType">Layer name</param>
+        /// <returns>True if all nodes in the subtree rooted with this node has annotation with the given layer, false
+        /// otherwise.</returns>
         public bool LayerAll(ViewLayerType viewLayerType)
         {
             if (children.Count == 0)
@@ -692,6 +826,12 @@ namespace AnnotatedTree
             return false;
         }
 
+        /// <summary>
+        /// Sets the shallow parse layer of all leaf nodes in the subtree rooted with this node to the given label according
+        /// to the given chunking type.
+        /// </summary>
+        /// <param name="chunkType">Type of the chunking used to annotate.</param>
+        /// <param name="label">Shallow parse label for the leaf nodes.</param>
         private void SetShallowParseLayer(ChunkType chunkType, string label)
         {
             var startWord = true;
@@ -751,6 +891,11 @@ namespace AnnotatedTree
             }
         }
 
+        /// <summary>
+        /// Recursive method that sets the shallow parse layer of all leaf nodes in the subtree rooted with this node
+        /// according to the given chunking type.
+        /// </summary>
+        /// <param name="chunkType">Type of the chunking used to annotate.</param>
         public void SetShallowParseLayer(ChunkType chunkType)
         {
             if (GetData() != null && GetData().IsChunkLabel() && parent != null)
@@ -769,6 +914,11 @@ namespace AnnotatedTree
             }
         }
 
+        /// <summary>
+        /// Recursive method to convert the subtree rooted with this node to a string. All parenthesis types are converted to
+        /// their regular forms.
+        /// </summary>
+        /// <returns>String version of the subtree rooted with this node.</returns>
         public string ToTurkishSentence()
         {
             if (children.Count == 0)
@@ -796,6 +946,12 @@ namespace AnnotatedTree
             return st;
         }
 
+        /// <summary>
+        /// Sets the NER layer according to the tag of the parent node and the word in the node. The word is searched in the
+        /// gazetteer, if it exists, the NER info is replaced with the NER tag in the gazetter.
+        /// </summary>
+        /// <param name="gazetteer">Gazetteer where we search the word</param>
+        /// <param name="word">Word to be searched in the gazetteer</param>
         public void CheckGazetteer(Gazetteer gazetteer, string word)
         {
             if (gazetteer.Contains(word) && GetParent().GetData().GetName().Equals("NNP"))
@@ -810,6 +966,12 @@ namespace AnnotatedTree
             }
         }
 
+        /// <summary>
+        /// Recursive method that sets the tag information of the given parse node with all descendants with respect to the
+        /// morphological annotation of the current node with all descendants.
+        /// </summary>
+        /// <param name="parseNode">Parse node whose tag information will be changed.</param>
+        /// <param name="surfaceForm">If true, tag will be replaced with the surface form annotation.</param>
         public void GenerateParseNode(ParseNode parseNode, bool surfaceForm)
         {
             if (NumberOfChildren() == 0)
@@ -834,6 +996,11 @@ namespace AnnotatedTree
                 }
             }
         }
+        
+        /// <summary>
+        /// Recursive method to convert the subtree rooted with this node to a string.
+        /// </summary>
+        /// <returns>String version of the subtree rooted with this node.</returns>
         public override string ToString()
         {
             if (children.Count < 2)

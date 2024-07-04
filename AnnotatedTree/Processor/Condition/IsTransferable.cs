@@ -11,6 +11,11 @@ namespace AnnotatedTree.Processor.Condition
             this._secondLanguage = secondLanguage;
         }
 
+        /// <summary>
+        /// Checks if the node is a leaf node and is not a None or Null node.
+        /// </summary>
+        /// <param name="parseNode">Parse node to check.</param>
+        /// <returns>True if the node is a leaf node and is not a None or Null node, false otherwise.</returns>
         public override bool Satisfies(ParseNodeDrawable parseNode)
         {
             if (base.Satisfies(parseNode))

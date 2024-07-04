@@ -2,22 +2,34 @@ namespace AnnotatedTree.Layer
 {
     public abstract class WordLayer
     {
-        protected string layerValue;
-        protected string layerName;
+        protected string LayerValue;
+        protected string LayerName;
 
+        /// <summary>
+        /// Accessor for the layerValue attribute.
+        /// </summary>
+        /// <returns>LayerValue attribute.</returns>
         public string GetLayerValue()
         {
-            return layerValue;
+            return LayerValue;
         }
 
+        /// <summary>
+        /// Accessor for the layerName attribute.
+        /// </summary>
+        /// <returns>LayerName attribute.</returns>
         public string GetLayerName()
         {
-            return layerName;
+            return LayerName;
         }
 
+        /// <summary>
+        /// Returns string form of the word layer.
+        /// </summary>
+        /// <returns>String form of the word layer.</returns>
         public string GetLayerDescription()
         {
-            return "{" + layerName + "=" + layerValue + "}";
+            return "{" + LayerName + "=" + LayerValue + "}";
         }
     }
 }

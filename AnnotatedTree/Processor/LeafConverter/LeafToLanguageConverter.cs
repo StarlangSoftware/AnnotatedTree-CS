@@ -6,6 +6,13 @@ namespace AnnotatedTree.Processor.LeafConverter
     {
         protected ViewLayerType viewLayerType;
 
+        /// <summary>
+        /// Converts the data in the leaf node to string, except shortcuts to parentheses are converted to its normal forms,
+        /// '*', '0', '-NONE-' are converted to empty string.
+        /// </summary>
+        /// <param name="leafNode">Node to be converted to string.</param>
+        /// <returns>String form of the data, except shortcuts to parentheses are converted to its normal forms,
+        /// '*', '0', '-NONE-' are converted to empty string.</returns>
         public string LeafConverter(ParseNodeDrawable leafNode)
         {
             var layerData = leafNode.GetLayerData(viewLayerType);

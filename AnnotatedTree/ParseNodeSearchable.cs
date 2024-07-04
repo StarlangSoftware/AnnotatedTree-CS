@@ -12,6 +12,13 @@ namespace AnnotatedTree
         private readonly List<string> _searchValues;
         private readonly bool _isLeaf;
 
+        /// <summary>
+        /// Constructs a ParseNodeSearchable from a xml node. If the node is a leaf node, it only sets the search type, layer
+        /// name and value. Otherwise, it only sets the parent node. It also calls itself recursively to generate its child
+        /// parseNodes.
+        /// </summary>
+        /// <param name="parent">The parent node of this node.</param>
+        /// <param name="node">Xml node that contains the node information.</param>
         public ParseNodeSearchable(ParseNodeSearchable parent, XmlNode node)
         {
             children = new List<ParseNode>();
@@ -170,21 +177,40 @@ namespace AnnotatedTree
             }
         }
 
+        /// <summary>
+        /// Accessor for the search type at the given position
+        /// </summary>
+        /// <param name="index">Position of the search type</param>
+        /// <returns>Search type at the given position index.</returns>
         public SearchType GetType(int index)
         {
             return _searchTypes[index];
         }
 
+        /// <summary>
+        /// Accessor for the search value at the given position
+        /// </summary>
+        /// <param name="index">Position of the search value</param>
+        /// <returns>Search value at the given position index.</returns>
         public string GetValue(int index)
         {
             return _searchValues[index];
         }
 
+        /// <summary>
+        /// Accessor for the layer name at the given position
+        /// </summary>
+        /// <param name="index">Position of the layer name</param>
+        /// <returns>Layer name at the given position index.</returns>
         public ViewLayerType GetViewLayerType(int index)
         {
             return _viewLayerTypes[index];
         }
 
+        /// <summary>
+        /// Accessor for the isLeaf attribute
+        /// </summary>
+        /// <returns>IsLeaf attribute</returns>
         public new bool IsLeaf()
         {
             return _isLeaf;

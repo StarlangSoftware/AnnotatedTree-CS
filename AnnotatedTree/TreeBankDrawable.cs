@@ -19,6 +19,10 @@ namespace AnnotatedTree
         public static string TURKISH_PHRASE_PATH = "../Turkish-Phrase/";
         public static string TREE_IMAGES = "../Tree-Images/";
 
+        /// <summary>
+        /// A simple constructor for TreeBankDrawable. Sets the parseTrees field with the given parameter.
+        /// </summary>
+        /// <param name="parseTrees">Parse trees in the treebank.</param>
         public TreeBankDrawable(List<ParseTree.ParseTree> parseTrees)
         {
             this.parseTrees = parseTrees;
@@ -39,6 +43,12 @@ namespace AnnotatedTree
             }
         }
 
+        /// <summary>
+        /// A constructor of {@link TreeBankDrawable} class which reads all {@link ParseTreeDrawable} files inside the given
+        /// folder. For each file inside that folder, the constructor creates a ParseTreeDrawable and puts in inside the list
+        /// parseTrees.
+        /// </summary>
+        /// <param name="folder">Folder where all parseTrees reside.</param>
         public TreeBankDrawable(string folder)
         {
             parseTrees = new List<ParseTree.ParseTree>();
@@ -50,6 +60,13 @@ namespace AnnotatedTree
             }
         }
 
+        /// <summary>
+        /// A constructor of {@link TreeBankDrawable} class which reads all {@link ParseTreeDrawable} files with the file
+        /// name satisfying the given pattern inside the given folder. For each file inside that folder, the constructor
+        /// creates a ParseTreeDrawable and puts in inside the list parseTrees.
+        /// </summary>
+        /// <param name="folder">Folder where all parseTrees reside.</param>
+        /// <param name="pattern">File pattern such as "." ".train" ".test".</param>
         public TreeBankDrawable(string folder, string pattern)
         {
             parseTrees = new List<ParseTree.ParseTree>();
@@ -73,6 +90,14 @@ namespace AnnotatedTree
             }
         }
 
+        /// <summary>
+        /// A constructor of {@link TreeBankDrawable} class which reads the files numbered in the given interval with the
+        /// file name having thr given extension inside the given folder. For each file inside that folder, the constructor
+        /// creates a ParseTreeDrawable and puts in inside the list parseTrees.
+        /// </summary>
+        /// <param name="path">Folder where all parseTrees reside.</param>
+        /// <param name="extension">File pattern such as "train" "test".</param>
+        /// <param name="interval">Starting  and ending index for the ParseTrees read.</param>
         public TreeBankDrawable(string path, string extension, Interval interval)
         {
             parseTrees = new List<ParseTree.ParseTree>();
@@ -89,6 +114,15 @@ namespace AnnotatedTree
             }
         }
 
+        /// <summary>
+        /// A constructor of {@link TreeBankDrawable} class which reads the files numbered from from to to with the file name
+        /// having thr given extension inside the given folder. For each file inside that folder, the constructor
+        /// creates a ParseTreeDrawable and puts in inside the list parseTrees.
+        /// </summary>
+        /// <param name="path">Folder where all parseTrees reside.</param>
+        /// <param name="extension">File pattern such as "train" "test".</param>
+        /// <param name="from">Starting index for the ParseTrees read.</param>
+        /// <param name="to">Ending index for the ParseTrees read.</param>
         public TreeBankDrawable(string path, string extension, int from, int to)
         {
             parseTrees = new List<ParseTree.ParseTree>();
@@ -102,16 +136,30 @@ namespace AnnotatedTree
             }
         }
 
+        /// <summary>
+        /// Accessor for the parseTrees attribute
+        /// </summary>
+        /// <returns>ParseTrees attribute</returns>
         public List<ParseTree.ParseTree> GetParseTrees()
         {
             return parseTrees;
         }
 
+        /// <summary>
+        /// Accessor for a specific tree with the given position in the array.
+        /// </summary>
+        /// <param name="index">Index of the parseTree.</param>
+        /// <returns>Tree that is in the position index</returns>
         public new ParseTreeDrawable Get(int index)
         {
             return (ParseTreeDrawable) parseTrees[index];
         }
 
+        /// <summary>
+        /// Accessor for a specific tree with the given file name.
+        /// </summary>
+        /// <param name="fileName">File name of the tree</param>
+        /// <returns>Tree that has the given file name</returns>
         public ParseTreeDrawable Get(string fileName)
         {
             foreach (var tree in parseTrees){
@@ -127,8 +175,8 @@ namespace AnnotatedTree
             var corpus = new Corpus.Corpus();
             foreach (var tree in parseTrees){
                 var parseTree = (ParseTreeDrawable) tree;
-                TreeToStringConverter treeToStringConverter = new TreeToStringConverter(parseTree, leafToLanguageConverter);
-                string sentence = treeToStringConverter.Convert();
+                var treeToStringConverter = new TreeToStringConverter(parseTree, leafToLanguageConverter);
+                var sentence = treeToStringConverter.Convert();
                 if (sentence != ""){
                     corpus.AddSentence(new Sentence(sentence));
                 } else {
@@ -138,6 +186,10 @@ namespace AnnotatedTree
             return corpus;
         }
 
+        /// <summary>
+        /// Clears the given layer for all nodes in all trees
+        /// </summary>
+        /// <param name="layerType">Layer name</param>
         public void ClearLayer(ViewLayerType layerType){
             foreach (var tree in parseTrees){
                 ParseTreeDrawable parseTree = (ParseTreeDrawable) tree;
@@ -149,12 +201,17 @@ namespace AnnotatedTree
         public List<ParseNodeDrawable> ExtractVerbs(WordNet.WordNet wordNet){
             var nodeList = new List<ParseNodeDrawable>();
             foreach (var tree in parseTrees){
-                ParseTreeDrawable parseTree = (ParseTreeDrawable) tree;
+                var parseTree = (ParseTreeDrawable) tree;
                 nodeList = nodeList.Union(parseTree.ExtractNodesWithVerbs(wordNet)).ToList();
             }
             return nodeList;
         }
 
+        /// <summary>
+        /// Returns list of trees that contain at least one verb which is annotated as 'PREDICATE'.
+        /// </summary>
+        /// <param name="wordNet">Wordnet used for checking the pos tag of the synset.</param>
+        /// <returns>List of trees that contain at least one verb which is annotated as 'PREDICATE'.</returns>
         public List<ParseTreeDrawable> ExtractTreesWithPredicates(WordNet.WordNet wordNet){
             var treeList = new List<ParseTreeDrawable>();
             foreach (var tree in parseTrees){
@@ -170,6 +227,9 @@ namespace AnnotatedTree
             parseTrees.RemoveAt(index);
         }
 
+        /// <summary>
+        /// Sorts the tres in the treebanks according to their filenames.
+        /// </summary>
         public void Sort(){
             parseTrees.Sort(new ParseTreeComparator());
         }
