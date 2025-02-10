@@ -831,7 +831,7 @@ namespace AnnotatedTree
 
             if (LayerExists(ViewLayerType.PROPBANK))
             {
-                annotatedWord.SetArgument(GetArgument().ToString());
+                annotatedWord.SetArgumentList(GetArgument().ToString());
             }
 
             if (LayerExists(ViewLayerType.SHALLOW_PARSE))
